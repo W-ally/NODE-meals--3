@@ -1,29 +1,21 @@
 const { db, DataTypes } = require('../utils/database.util');
 
-const Orders = db.define('order', {
+const Meal = db.define('meal', {
 	id: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement: true,
 		allowNull: false,
 	},
-    mealId: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-	},
-    userId: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-	},
 	name: {
 		type: DataTypes.STRING,
 		allowNull: false,
 	},
-	totalPrice: {
+	price: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
-	quantity: {
+	restaurantId: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
@@ -34,4 +26,4 @@ const Orders = db.define('order', {
 	},
 });
 
-module.exports = { Orders };
+module.exports = { Meal };

@@ -2,45 +2,34 @@ const express = require('express');
 
 // Controllers
 const {
-
-	createOrders,
-    getAllOrders,
-    updateOrders,
-    deleteOrders,
-	
-} = require('../controllers/posts.controller');
+  createOrder,
+  getAllOrders,
+  completedOrder,
+  cancelledOrder,
+} = require('../controllers/orders.controller');
 
 // Middlewares
-const { postExists } = require('../middlewares/posts.middlewares');
 const {
-	protectSession,
-	protectPostsOwners,
-} = require('../middlewares/auth.middlewares');
-const {
-	createPostValidators,
-} = require('../middlewares/validators.middlewares');
+  createOrderValidators,
+} = require('../middlewares/validators.middleware');
 
-const restaurantsRouter = express.Router();
+const { orderExists } = require('../middlewares/orders.middleware');
+const { mealExists } = require('../middlewares/meals.middleware');
 
-restaurantsRouter.use(protectSession);//session JWT
+const { protectSession } = require('../middlewares/auth.middleware');
 
-restaurantsRouter.post(
-	'/', 
-	createPostValidators, 
-	createOrders);
+const ordersRouter = express.Router();
 
-restaurantsRouter.get('/me', getAllOrders);
+ordersRouter.use(protectSession);
 
-restaurantsRouter.patch(
-	'/:id',
-	postExists, 
-	protectPostsOwners, 
-	updateOrders);
+ordersRouter.post('/', mealExists, createOrderValidators, createOrder);
 
-restaurantsRouter.delete(
-	'/:id', 
-	postExists, 
-	protectPostsOwners, 
-	deleteOrders);
-;
-module.exports = { restaurantsRouter };
+ordersRouter.get('/me', getAllOrders);
+
+ordersRouter
+  .use('/:id', orderExists)
+  .route('/:id')
+  .patch(completedOrder)
+  .delete(cancelledOrder);
+
+module.exports = { ordersRouter };

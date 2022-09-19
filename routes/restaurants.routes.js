@@ -2,62 +2,53 @@ const express = require('express');
 
 // Controllers
 const {
-
-	getAllRestaurants,
-    getAllIdRestaurants,
-	createRestaurant,
-	updateRestaurant,
-	deleteRestaurant,
-	reviewRestaurant,
-	deleteRestaurant,
-	reviewRestaurant,
-	deleteReviewRestaurant,
-	
-} = require('../controllers/posts.controller');
+  createRestaurant,
+  getAllRestaurants,
+  getRestaurantById,
+  updateRestaurant,
+  deteleRestaurant,
+  createReview,
+  updateReview,
+  deleteReview,
+} = require('../controllers/restaurants.controller');
 
 // Middlewares
-const { postExists } = require('../middlewares/posts.middlewares');
 const {
-	protectSession,
-	protectPostsOwners,
-} = require('../middlewares/auth.middlewares');
-const {
-	createPostValidators,
-} = require('../middlewares/validators.middlewares');
+  createRestaurantValidators,
+  createReviewValidators,
+} = require('../middlewares/validators.middleware');
+
+const { restaurantExists } = require('../middlewares/restaurants.middleware');
+const { reviewExists } = require('../middlewares/reviews.middleware');
+
+const { protectSession } = require('../middlewares/auth.middleware');
 
 const restaurantsRouter = express.Router();
 
 restaurantsRouter.get('/', getAllRestaurants);
+restaurantsRouter.get('/:id', restaurantExists, getRestaurantById);
 
-restaurantsRouter.get('/:id', getAllIdRestaurants);
+restaurantsRouter.use(protectSession);
 
-restaurantsRouter.use(protectSession);//session JWT
-
-
-restaurantsRouter.post('/', createPostValidators, createRestaurant);
-
-restaurantsRouter.patch(
-	'/:id',
-	postExists, 
-	protectPostsOwners, 
-	updateRestaurant);
-
-restaurantsRouter.delete(
-	'/:id', 
-	postExists, 
-	protectPostsOwners, 
-	deleteRestaurant);
+restaurantsRouter.post('/', createRestaurantValidators, createRestaurant);
 
 restaurantsRouter.post(
-	'/reviews/:restaurantId',
-	 createPostValidators,
-	  reviewRestaurant);
+  '/reviews/:restaurantId',
+  createReviewValidators,
+  restaurantExists,
+  createReview
+);
 
-restaurantsRouter.delete(
-	'/reviews/:id',
-	 postExists,
-	 protectPostsOwners, 
-	 deleteReviewRestaurant);
+restaurantsRouter
+  .use('/reviews/:reviewId', reviewExists)
+  .route('/reviews/:reviewId')
+  .patch(updateReview)
+  .delete(deleteReview);
 
+restaurantsRouter
+  .use('/:id', restaurantExists)
+  .route('/:id')
+  .patch(updateRestaurant)
+  .delete(deteleRestaurant);
 
 module.exports = { restaurantsRouter };

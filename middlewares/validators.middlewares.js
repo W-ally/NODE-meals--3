@@ -1,54 +1,108 @@
 const { body, validationResult } = require('express-validator');
 
-const checkValidations = (req, res, next) => {
-	const errors = validationResult(req);
+const { AppError } = require('../utils/appError.util');
 
-	if (!errors.isEmpty()) {
-		// [{ ..., msg }] -> [msg, msg, ...] -> 'msg. msg. msg. msg'
-		const errorMessages = errors.array().map(err => err.msg);
+const checkResult = (req, res, next) => {
+  const errors = validationResult(req);
 
-		const message = errorMessages.join('. ');
+  if (!errors.isEmpty()) {
+    // Array has errors
+    const errorMsgs = errors.array().map((err) => err.msg);
 
-		return res.status(400).json({
-			status: 'error',
-			message,
-		});
-	}
+    const message = errorMsgs.join('. ');
 
-	next();
+    return next(new AppError(message, 400));
+  }
+
+  next();
 };
 
 const createUserValidators = [
-	body('name')
-		.isString()
-		.withMessage('Name must be a string')
-		.notEmpty()
-		.withMessage('Name cannot be empty')
-		.isLength({ min: 3 })
-		.withMessage('Name must be at least 3 characters'),
-	body('email').isEmail().withMessage('Must provide a valid email'),
-	body('password')
-		.isString()
-		.withMessage('Password must be a string')
-		.notEmpty()
-		.withMessage('Password cannot be empty')
-		.isLength({ min: 8 })
-		.withMessage('Password must be at least 8 characters'),
-	checkValidations,
+  body('name')
+    .notEmpty()
+    .withMessage('Name cannot be empty')
+    .isString()
+    .withMessage('Name is not a string'),
+  body('email').isEmail().withMessage('Must provide a valid email'),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .isAlphanumeric()
+    .withMessage('Password must contain letters and numbers'),
+  body('role')
+    .notEmpty()
+    .withMessage('Role cannot be empty')
+    .isString()
+    .withMessage('Role is not a string'),
+
+  checkResult,
 ];
 
-const createPostValidators = [
-	body('title')
-		.isString()
-		.withMessage('Title must be a string')
-		.isLength({ min: 3 })
-		.withMessage('Title must be at least 3 characters'),
-	body('content')
-		.isString()
-		.withMessage('Content must be a string')
-		.isLength({ min: 3 })
-		.withMessage('Content must be at least 3 characters long'),
-	checkValidations,
+const createOrderValidators = [
+  body('mealId')
+    .notEmpty()
+    .withMessage('mealId cannot be empty')
+    .isNumeric()
+    .withMessage('mealId is not a number'),
+  body('quantity')
+    .notEmpty()
+    .withMessage('quantity cannot be empty')
+    .isNumeric()
+    .withMessage('quantity is not a number'),
+  checkResult,
 ];
 
-module.exports = { createUserValidators, createPostValidators };
+const createMealValidators = [
+  body('name')
+    .notEmpty()
+    .withMessage('name cannot be empty')
+    .isString()
+    .withMessage('name is not a string'),
+  body('price')
+    .notEmpty()
+    .withMessage('price cannot be empty')
+    .isNumeric()
+    .withMessage('price is not a number'),
+  checkResult,
+];
+
+const createRestaurantValidators = [
+  body('name')
+    .notEmpty()
+    .withMessage('name cannot be empty')
+    .isString()
+    .withMessage('name is not a string'),
+  body('address')
+    .notEmpty()
+    .withMessage('address cannot be empty')
+    .isString()
+    .withMessage('address is not a string'),
+  body('rating')
+    .notEmpty()
+    .withMessage('rating cannot be empty')
+    .isNumeric()
+    .withMessage('rating is not a number'),
+  checkResult,
+];
+
+const createReviewValidators = [
+  body('comment')
+    .notEmpty()
+    .withMessage('Comment cannot be empty')
+    .isString()
+    .withMessage('Comment must be a string'),
+  body('rating')
+    .notEmpty()
+    .withMessage('rating cannot be empty')
+    .isNumeric()
+    .withMessage('rating is not a number'),
+  checkResult,
+];
+
+module.exports = {
+  createUserValidators,
+  createOrderValidators,
+  createMealValidators,
+  createRestaurantValidators,
+  createReviewValidators,
+};
