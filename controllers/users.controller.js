@@ -186,7 +186,3 @@ module.exports = {
   getAllOrders,
   getOrderById,
 };
-
-// Gen random jwt signs
-// require('crypto').randomBytes(64).toString('hex') -> Enter into the node console and paste the command
-

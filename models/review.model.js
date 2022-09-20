@@ -1,6 +1,6 @@
 const { db, DataTypes } = require('../utils/database.util');
 
-const Reviews = db.define('review', {
+const Review = db.define('review', {
 	id: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
@@ -26,4 +26,4 @@ const Reviews = db.define('review', {
 	
 });
 
-module.exports = { Reviews };
+module.exports = { Review };

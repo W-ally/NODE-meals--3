@@ -38,6 +38,11 @@ restaurantsRouter.post(
   restaurantExists,
   createReview
 );
+restaurantsRouter
+  .use('/:id', restaurantExists)
+  .route('/:id')
+  .patch(updateRestaurant)
+  .delete(deteleRestaurant);
 
 restaurantsRouter
   .use('/reviews/:reviewId', reviewExists)
@@ -45,10 +50,5 @@ restaurantsRouter
   .patch(updateReview)
   .delete(deleteReview);
 
-restaurantsRouter
-  .use('/:id', restaurantExists)
-  .route('/:id')
-  .patch(updateRestaurant)
-  .delete(deteleRestaurant);
 
 module.exports = { restaurantsRouter };
