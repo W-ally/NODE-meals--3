@@ -24,6 +24,8 @@ const {
   protectUserAccount,
 } = require('../middlewares/auth.middleware');
 
+
+
 const usersRouter = express.Router();
 
 usersRouter.post('/signup', createUserValidators, createUser);

@@ -14,9 +14,7 @@ const app = express();
 // Enable Express app to receive JSON data
 app.use(express.json());
 
-// Define endpoints
-// /posts
-// Define endpoints
+
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/orders', ordersRouter);
 app.use('/api/v1/meals', mealsRouter);
